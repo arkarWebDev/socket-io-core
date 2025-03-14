@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket = io("http://localhost:3000");
-const username = nanoid(4);
+const username = nanoid(8);
 
 type Message = {
   message: string;
@@ -23,7 +23,7 @@ const App = () => {
 
   useEffect(() => {
     socket.on("join noti", ({ message, username }: Message) => {
-      const userName = username ? username : "Anonymous";
+      const userName = username ? username : "";
       setGroupMessages((prev) => [...prev, { message, username: userName }]);
     });
 
@@ -32,30 +32,41 @@ const App = () => {
     });
 
     socket.on("leave noti", ({ message, username }: Message) => {
-      const userName = username ? username : "Anonymous";
+      const userName = username ? username : "";
       setGroupMessages((prev) => [...prev, { message, username: userName }]);
     });
   }, []);
 
   return (
-    <div>
-      <div>
-        {groupMessages.map((msg, index) => (
-          <div key={index}>
-            {msg.username} - {msg.message}
+    <>
+      <div className="layout">
+        <nav>
+          <h2>Unknow Profile</h2>
+          <p>A simple group chat with socket.io</p>
+        </nav>
+        <main>
+          <div className="msg-layout">
+            {groupMessages.map((msg, index) => (
+              <div key={index} className="msg-box">
+                <div className="message">{msg.message}</div>
+                {msg.username !== "" && (
+                  <div className="sender">user id - {msg.username}</div>
+                )}
+              </div>
+            ))}
           </div>
-        ))}
+          <form onSubmit={sendMessage}>
+            <input
+              type="text"
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+              placeholder="Type a message"
+            />
+            <button type="submit">Send</button>
+          </form>
+        </main>
       </div>
-      <form onSubmit={sendMessage}>
-        <input
-          type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          placeholder="Type a message"
-        />
-        <button type="submit">Send</button>
-      </form>
-    </div>
+    </>
   );
 };
 

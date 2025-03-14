@@ -18,7 +18,7 @@ type Message = {
 io.on("connection", (socket) => {
   console.log("A user is connected.");
 
-  io.emit("join noti", { message: "A new user is joined." });
+  io.emit("join noti", { message: "Someone joined the room." });
 
   socket.on("send message", ({ message, username }: Message) => {
     io.emit("send message", { message, username });
@@ -27,7 +27,7 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("A user is disconnected.");
 
-    io.emit("leave noti", { message: "A new user is leave." });
+    io.emit("leave noti", { message: "Someone leaved the room." });
   });
 });
 
